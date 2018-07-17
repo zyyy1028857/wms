@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.scm.dao.InorderMapper">
+	<resultMap id="inorderResultMap" type="cn.itcast.scm.entity.Inorder">
+		<id column="goods_Id" property="goodsId" jdbcType="VARCHAR" />
+		<result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+		<result column="goods_amount" property="goodsAmount" jdbcType="VARCHAR" />
+		<result column="sup_name" property="supName" jdbcType="VARCHAR" />
+		<result column="order_id" property="orderId" jdbcType="VARCHAR" />
+		<result column="ordertime" property="orderTime" jdbcType="INTEGER" />
+		<result column="order_ok" property="orderOk" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<select id="selectList2" resultMap="inorderResultMap" parameterType="String">
+		select * from inorder where order_id= #{#orderId}
+	</select>
+
+
+	<!-- 根据主键修改供应商信息 -->
+	<update id="update" parameterType="inorder">
+		update inorder set
+		goods_name=#{goodsName},goods_amount=#{goodsAmount},sup_name=#{supName},ordertime=#{orderTime},order_ok=#{orderOk}
+		where
+		order_id=#{orderId}
+	</update>
+
+
+
+	<!-- 通过主键批量删除供应商 -->
+	<delete id="deleteList">
+		delete from inorder where order_id in
+		<foreach collection="array" open="(" close=")" separator=","
+			item="pk">
+			#{pk}
+		</foreach>
+
+	</delete>
+
+
+	<insert id="insert" parameterType="inorder">
+		insert into inorder
+		(goods_name,goods_amount,sup_name,order_id,ordertime,order_ok)
+		values
+		(#{goodsName},#{goodsAmount},#{supName},#{orderId},#{orderTime},#{orderOk});
+	</insert>
+
+	<!-- 通过多条件分页查询，返回数据集 -->
+	<select id="selectPageListUseDyc" parameterType="page"
+		resultMap="inorderResultMap">
+		select * from inorder
+		<where>
+			<if test="paramEntity.orderId!=null">and order_id like #{paramEntity.goodsName}</if>
+		</where>
+		limit #{start},#{rows}
+	</select>
+
+	<!-- 通过多条件分页查询，返回总记录数 -->
+	<select id="selectPageCountUseDyc" parameterType="page"
+		resultType="Integer">
+		select count(1) from inorder
+		<where>
+			<if test="paramEntity.orderId!=null">and order_id like #{paramEntity.goodsName}</if>
+		</where>
+	</select>
+
+</mapper>

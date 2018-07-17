@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.scm.dao.GoodsMapper" >
+  <resultMap id="goodsResultMap" type="cn.itcast.scm.entity.Goods" >
+    <id column="goods_Id" property="goodsId" jdbcType="VARCHAR" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR" />
+    <result column="goods_type" property="goodsType" jdbcType="VARCHAR" />
+    <result column="goods_color" property="goodsColor" jdbcType="VARCHAR" />
+    <result column="goods_store" property="goodsStore" jdbcType="INTEGER" />
+    <result column="goods_limit" property="goodsLimit" jdbcType="INTEGER" />
+    <result column="goods_commission" property="goodsCommission" jdbcType="VARCHAR" />
+    <result column="goods_producer" property="goodsProducer" jdbcType="VARCHAR" />
+    <result column="goods_remark" property="goodsRemark" jdbcType="VARCHAR" />
+    <result column="goods_sel_price" property="goodsSelPrice" jdbcType="VARCHAR" />
+    <result column="goods_buy_price" property="goodsBuyPrice" jdbcType="VARCHAR" />
+  </resultMap>
+   <!-- 通过主键批量删除供应商 -->
+  <delete id="deleteList">
+  	delete from goods where goods_Id in
+	<foreach collection="array" open="(" close=")" separator="," item="pk">
+		#{pk}
+	</foreach>
+  
+  </delete>
+  
+  
+  
+  <!-- 插入一个新的商品 -->
+  <insert id="insert" parameterType="goods">
+   insert into goods (goods_Id,goods_name,goods_unit,goods_type,goods_color,goods_store,goods_limit,goods_commission,goods_producer,goods_remark,goods_sel_price,goods_buy_price) 
+   values 
+   (#{goodsId},#{goodsName},#{goodsUnit},#{goodsType},#{goodsColor},#{goodsStore},#{goodsLimit},#{goodsCommission},#{goodsProducer},#{goodsRemark},#{goodsSelPrice},#{goodsBuyPrice}) 
+   </insert>
+  
+  <select id="selectByName" parameterType="String" resultMap="goodsResultMap">
+  select * from goods where  goods_name=#{goodsName}
+  </select>
+  
+  
+  <!-- 根据主键修改供应商信息 -->
+	<update id="update" parameterType="goods" >
+		update goods set
+		goods_name=#{goodsName},goods_unit=#{goodsUnit},goods_type=#{goodsType},goods_color=#{goodsColor},
+		goods_store=#{goodsStore},goods_limit=#{goodsLimit},goods_commission=#{goodsCommission},goods_producer=#{goodsProducer},
+		goods_remark=#{goodsRemark},goods_sel_price=#{goodsSelPrice},goods_buy_price=#{goodsBuyPrice}
+		where
+		goods_Id=#{goodsId}	
+	</update>
+  
+  
+   <!-- 通过多条件分页查询，返回数据集 -->
+  <select id="selectPageListUseDyc" parameterType="page" resultMap="goodsResultMap" >
+    select * from goods 
+    <where>
+    	<if test="paramEntity.goodsName!=null">and goods_name like #{paramEntity.goodsName}</if>
+    </where>
+	 limit #{start},#{rows}
+  </select>
+  
+  <!-- 通过多条件分页查询，返回总记录数 -->
+  <select id="selectPageCountUseDyc" parameterType="page" resultType="Integer">
+  	select count(1) from goods 
+  	  <where>
+    	<if test="paramEntity.goodsName!=null">and goods_name like #{paramEntity.goodsName}</if>
+    </where>
+  </select>
+  
+</mapper>
